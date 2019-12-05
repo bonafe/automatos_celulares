@@ -10,14 +10,26 @@
 	<canvas id="canvasDeDesenho" width="750" height="500" style="border:1px solid blue;"></canvas>	
 	<script>	
 	
+		//****************************************************
+		// CLASSE TABULEIRO
+		//****************************************************
+		//Para facilitar a reutilização do nosso código iremos criar uma classe de Tabuleiro
+		//Essa classe vai saber:
+		//   Criar um novo tabuleiro
+		//	 Preencher o tabuleiro com valores aleatórios
 		class Tabuleiro{
+			
+			//Constroi um tabuleiro com número de linhas e
+			//colunas definidos
 			constructor (linhas, colunas){
 				this.linhas = linhas;
 				this.colunas = colunas;
 				this.criarMatrizTabuleiro ();
 			}
 			
+			
 			criarMatrizTabuleiro(){
+				
 				//Cria uma matriz com o número de linhas
 				this.matrizTabuleiro = new Array(this.linhas);
 				
@@ -45,7 +57,12 @@
 				}
 			}
 		}
-				
+		
+		
+		
+		//****************************************************
+		// FUNÇÃO DE DESENHO
+		//****************************************************
 		//Cria uma função que desenha um tabuleiro
 		function desenharTabuleiro(tabuleiro, tamanhoArestaCelula){
 			

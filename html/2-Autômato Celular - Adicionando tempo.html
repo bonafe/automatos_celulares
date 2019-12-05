@@ -10,13 +10,13 @@
 	<canvas id="canvasDeDesenho" width="750" height="500" style="border:1px solid blue;"></canvas>	
 	<script>	
 	
-		//Define e inicializa a variável globais X
-		//Iremos mudar o valor de X conforme a passagem do tempo
+		//Define e inicializa a variável global x que guardará a posição do quadrado na tela
+		//Iremos mudar o valor de x conforme a passagem do tempo
 		var x = 0;
 				
-		//Define e iniciliazar a variável global x_maximo
-		//Quando a varíavel x atingir o x_maximo (ou voltar para 0), mudaremos a direção
-		var x_maximo = 100;
+		//Define e iniciliaza a variável global x_maximo
+		//Quando a variável x atingir o x_maximo (ou voltar para 0), mudaremos a direção
+		var x_maximo = 300;
 		
 		//Define e inicializa a variável global direcao
 		//Iremos mudar o valor da direção quando o contador de passos chegar em 100 ou em 0
@@ -32,17 +32,30 @@
 			//O contexto é o lugar onde iremos efetivamente desenhar
 			var ctx = canvas.getContext("2d");
 			
-			//Se a direção for igual a 1 iremos mover para a 
+			//Se a direção for igual a 1 iremos mover para a direita 
 			if (direcao == 1){
+				
+				//Aumenta a posição x
 				x ++;
+				
+				//Caso a varíavel x chegou no valor máximo
 				if (x > x_maximo){
+					
+					//Muda a direção
 					direcao = 0;
 				}
 			}
 			
+			//Se a direção for igual a 0 iremos mover para a esquerda
 			if (direcao == 0){
+				
+				//Diminui a posição x
 				x--;
+				
+				//Caso a varíavel x chegou ao valor mínimo
 				if (x < 0){
+					
+					//Muda a direção
 					direcao = 1;
 				}
 			}

@@ -16,13 +16,26 @@
 <body class="flex-container">
 	<script>	
 	
+		//****************************************************
+		// CLASSE TABULEIRO
+		//****************************************************
+		//Para facilitar a reutilização do nosso código iremos criar uma classe de Tabuleiro
+		//Essa classe vai saber:
+		//   Criar um novo tabuleiro
+		//	 Preencher o tabuleiro com valores aleatórios
+		//   Calcular uma geração baseada na geração anterior
 		class Tabuleiro{
+			
+			//Constroi um tabuleiro com número de linhas e
+			//colunas definidos
 			constructor (linhas, colunas){
+				
 				this.linhas = linhas;
 				this.colunas = colunas;			
 				
 				this.matrizTabuleiro = this.criarMatrizTabuleiro ();
 			}			
+			
 			
 			criarMatrizTabuleiro(){
 				//Cria uma matriz local com o número de linhas
@@ -75,47 +88,91 @@
 				
 				var vizinhos = 0;
 				
+				//Conta o número de vizinhos da celula
 				for (var linhaReferencia = -1; linhaReferencia <= 1; linhaReferencia++){
 					for (var colunaReferencia = -1; colunaReferencia <= 1; colunaReferencia++){
 						vizinhos += this.matrizTabuleiro[this.trazerLinha(linha+linhaReferencia)][this.trazerColuna(coluna+colunaReferencia)];
 					}
 				 }
+				//Como a contagem incluiu ela mesmo, a subtrai to total
 				vizinhos -= this.matrizTabuleiro[linha][coluna];
 				
+				//Caso a celula esteja "viva" e tenha menos de dois vizinhos
 				if ((this.matrizTabuleiro[linha][coluna] == 1) && (vizinhos < 2)){
+					
+					//Celula "morre"
 					return 0;
+					
+				//Caso a célula esteja "viva" e tenha mais que três vizinhos
 				}else if ((this.matrizTabuleiro[linha][coluna] == 1) && (vizinhos > 3)){
+					
+					//Celula "morre"
 					return 0;
+					
+				//Caso a célula esteja "morta" e tenha extamente três vizinhos
 				}else if ((this.matrizTabuleiro[linha][coluna] == 0) && (vizinhos == 3)){
+					
+					//Célula "vive"
 					return 1;
+					
+				//Caso contrário				
 				}else{
+					
+					//Permanece no estado atual
 					return this.matrizTabuleiro[linha][coluna];
 				}
 			}
 		
+			
+			
+			//Trata a linha
 			trazerLinha(linha){
+				//Se for maior ou igual a última
 				if (linha >= this.linhas){
+					
+					//Volta para primeira
 					return 0;
+					
+				//Se for menor que a primeira
 				}else if (linha < 0){
+					
+					//Volta para última
 					return this.linhas-1;
+					
 				}else{
 					return linha;
 				}
 			}
 			
+			
+			//Trata a coluna
 			trazerColuna(coluna){
+				
+				//Se for maior ou igual a última
 				if (coluna >= this.colunas){
+					
+					//Volta para primeira
 					return 0;
+					
+				//Se for menor que a primeira	
 				}else if (coluna < 0){
+					
+					//Volta para última
 					return this.colunas-1;
+					
 				}else{
 					return coluna;
 				}
 			}
 		}
 				
+		
+		
+		//****************************************************
+		// FUNÇÃO DE DESENHO
+		//****************************************************
 		//Cria uma função que desenha um tabuleiro
-		function desenharTabuleiro(canvas, tabuleiro){
+		function desenharTabuleiro(canvas, tabuleiro, tamanhoAresta){
 									
 			//O contexto é o lugar onde iremos efetivamente desenhar
 			var ctx = canvas.getContext("2d");
@@ -155,20 +212,10 @@
 		//Cria uma lista para guardar nossos autômatos
 		var listaAutomatos = [];
 		var quantidadeDeAutomatos = 1;
-		var largura = 1000;
-		var altura = 600;
-		var tamanhoAresta = 5;
+		var largura = 700;
+		var altura = 500;
+		var tamanhoArestaCelula = 5;
 		
-		
-		function paddy(num, padlen, padchar) {
-		    var pad_char = typeof padchar !== 'undefined' ? padchar : '0';
-		    var pad = new Array(1 + padlen).join(pad_char);
-		    return (pad + num).slice(-pad.length);
-		}
-		
-		function gerarRegras(regra){
-			return paddy(regra.toString(2), 8, 0);
-		}
 		
 		
 		function criarAutomatos(){
@@ -188,7 +235,7 @@
 				canvas.width = largura;
 				canvas.height = altura;
 				
-				var tabuleiro = new Tabuleiro(Math.floor(largura/tamanhoAresta), Math.floor(altura/tamanhoAresta));				
+				var tabuleiro = new Tabuleiro(Math.floor(largura/tamanhoArestaCelula), Math.floor(altura/tamanhoArestaCelula));				
 				
 				tabuleiro.preencherMatrizTabuleiroComValoresAleatorios();
 								
@@ -207,7 +254,7 @@
 				var canvas = listaAutomatos[iTabuleiro]["canvas"];
 				tabuleiro.proximaGeracao();
 				//Desenha o tabuleiro que acabamos de criar com celulas de aresta com 10 pixels
-				desenharTabuleiro(canvas, tabuleiro);
+				desenharTabuleiro(canvas, tabuleiro, tamanhoArestaCelula);
 			}						
 		}
 		

@@ -3,11 +3,33 @@
 <head>
 <meta charset="ISO-8859-1">
 <title>Autômato Celular - Desenhando no canvas</title>
+<style>
+.flex-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+.caixaAutomato{
+	padding: 5px;
+}
+
+</style>
 </head>
-<body>	
+<body class="flex-container">	
 	<script>	
 	
+		//****************************************************
+		// CLASSE TABULEIRO
+		//****************************************************
+		//Para facilitar a reutilização do nosso código iremos criar uma classe de Tabuleiro
+		//Essa classe vai saber:
+		//   Criar um novo tabuleiro
+		//	 Preencher o tabuleiro com valores aleatórios
+		//   Gerenciar as gerações do autômato
+		//   Calcular uma geração baseada na geração anterior
 		class Tabuleiro{
+			
+			//Constroi um tabuleiro com número de linhas e
+			//colunas definidos
 			constructor (linhas, colunas){
 				this.linhas = linhas;
 				this.colunas = colunas;
@@ -20,6 +42,7 @@
 				
 				this.criarMatrizTabuleiro ();
 			}
+			
 			
 			criarMatrizTabuleiro(){
 				//Cria uma matriz com o número de linhas
@@ -34,6 +57,7 @@
 				}				
 			}
 			
+			
 			preencherMatrizTabuleiroComValoresAleatorios(){
 				//Para cada linha de nossa matriz de linhas
 				for (var linha = 0; linha < this.linhas; linha++){
@@ -42,6 +66,7 @@
 				}
 			}
 			
+			
 			preencherLinhaTabuleiroComValoresAleatorios(linha){
 				//Percorre as colunas da linha preenchendo com valores aleatórios
 				for (var coluna = 0; coluna < this.colunas; coluna++){
@@ -49,6 +74,8 @@
 				}
 			}
 			
+			
+			//Calcula a próxima geração
 			proximaGeracao(){
 				
 				this.geracao++;
@@ -70,6 +97,8 @@
 				}
 			}
 			
+			
+			//motor de regras para processar a geração
 			motorDeRegras(geracao, coluna){
 				
 				var iGeracaoAnterior = geracao-1;
@@ -87,6 +116,7 @@
 				else if (a == 0 && b == 0 && c == 0) return this.regras[7];
 			}
 		
+			
 			colunaAnterior(coluna){
 				
 				var auxiliarColunaAnterior = coluna -1;
@@ -99,6 +129,7 @@
 				
 				return auxiliarColunaAnterior;
 			}
+			
 			
 			colunaPosterior(coluna){
 				
@@ -113,8 +144,13 @@
 			}
 		}
 				
+		
+		
+		//****************************************************
+		// FUNÇÃO DE DESENHO
+		//****************************************************
 		//Cria uma função que desenha um tabuleiro
-		function desenharTabuleiro(canvas, tabuleiro){
+		function desenharTabuleiro(canvas, tabuleiro, tamanhoAresta){
 									
 			//O contexto é o lugar onde iremos efetivamente desenhar
 			var ctx = canvas.getContext("2d");
@@ -156,8 +192,12 @@
 		var quantidadeDeAutomatos = 100;
 		var largura = 200;
 		var altura = 200;
-		var tamanhoAresta = 10;
+		var tamanhoArestaCelula = 10;
 		
+		
+		//****************************************************
+		// FUNÇÃO DE CRIAÇÃO DOS AUTÔMATOS
+		//****************************************************
 		function criarAutomatos(){
 			
 			var body = document.getElementsByTagName("body")[0];
@@ -166,38 +206,59 @@
 			
 			var regras = 0;
 			
+			//Percorre o número de autômatos definijdos
 			for (var iAutomato = 0; iAutomato < quantidadeDeAutomatos; iAutomato++){
+				
+				//Iremos criar o elementos canvas programaticamente
 				var canvas = document.createElement("canvas");
-								
-				canvas.style.width = largura;
-				canvas.style.height = altura;
 				
-				var tabuleiro = new Tabuleiro(Math.floor(largura/tamanhoAresta), Math.floor(altura/tamanhoAresta));
+				//Aplicamos a classe de estilo que criamos lá em cima no head
+				//Esse estilo vai colocar uma borda em volta de nosso canvas
+				canvas.className = "caixaAutomato";
 				
+				//O canvas terá a altura e largura definidos
+				canvas.width = largura;
+				canvas.height = altura;
+				
+				//O número de linhas e colunas do tabuleiro será definido
+				//pela largura e altura dividido pelo tamanho da aresta
+				var tabuleiro = new Tabuleiro(Math.floor(largura/tamanhoArestaCelula), Math.floor(altura/tamanhoArestaCelula));
+				
+				//Inicia a primeira linha com valores aleatórios
 				tabuleiro.preencherLinhaTabuleiroComValoresAleatorios(0);
 								
+				//Iremos guardar o canvas e o tabuleiro em uma lista para
+				//iterarmos sobre ela depois
 				listaAutomatos.push({"canvas":canvas, "tabuleiro":tabuleiro});
 									
+				//Adicionamos o canvas ao body da página html para ser exibido
 				body.appendChild(canvas);	
 			}								
 		}
 		
+		
 		//Nossa função desenhar que será chamada conforme o intervalo definido
 		function desenhar(){
 			
+			//Percorre os autômatos que foram criados
 			for (var iTabuleiro = 0; iTabuleiro < quantidadeDeAutomatos; iTabuleiro++){
+				
 				var tabuleiro = listaAutomatos[iTabuleiro]["tabuleiro"];
 				var canvas = listaAutomatos[iTabuleiro]["canvas"];
+				
+				//Processa a próxima geração
 				tabuleiro.proximaGeracao();
-				//Desenha o tabuleiro que acabamos de criar com celulas de aresta com 10 pixels
-				desenharTabuleiro(canvas, tabuleiro);
+				
+				//Desenha o tabuleiro que acabamos de criar com celulas com o tamanho da aresta
+				desenharTabuleiro(canvas, tabuleiro, tamanhoArestaCelula);
 			}						
 		}
 		
 		
 		
-		
+		//Manda criar os autômatos
 		criarAutomatos();
+		
 		
 		//Define um intervalo em que a função desenhar deve ser chamada
 		//setIntervalo(funcao_que_sera_chamada, intervalo_em_milissegundos)

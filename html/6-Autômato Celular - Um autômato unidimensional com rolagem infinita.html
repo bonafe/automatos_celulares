@@ -10,7 +10,20 @@
 	<canvas id="canvasDeDesenho" width="750" height="500" style="border:1px solid blue;"></canvas>	
 	<script>	
 	
+		//****************************************************
+		// CLASSE TABULEIRO
+		//****************************************************
+		//Para facilitar a reutilização do nosso código iremos criar uma classe de Tabuleiro
+		//Essa classe vai saber:
+		//   Criar um novo tabuleiro
+		//	 Preencher o tabuleiro com valores aleatórios
+		//   Gerenciar as gerações do autômato
+		//   Calcular uma geração baseada na geração anterior
 		class Tabuleiro{
+			
+			
+			//Constroi um tabuleiro com número de linhas e
+			//colunas definidos
 			constructor (linhas, colunas){
 				this.linhas = linhas;
 				this.colunas = colunas;
@@ -23,6 +36,7 @@
 				
 				this.criarMatrizTabuleiro ();
 			}
+			
 			
 			criarMatrizTabuleiro(){
 				//Cria uma matriz com o número de linhas
@@ -37,6 +51,7 @@
 				}				
 			}
 			
+			
 			preencherMatrizTabuleiroComValoresAleatorios(){
 				//Para cada linha de nossa matriz de linhas
 				for (var linha = 0; linha < this.linhas; linha++){
@@ -45,6 +60,7 @@
 				}
 			}
 			
+			
 			preencherLinhaTabuleiroComValoresAleatorios(linha){
 				//Percorre as colunas da linha preenchendo com valores aleatórios
 				for (var coluna = 0; coluna < this.colunas; coluna++){
@@ -52,6 +68,8 @@
 				}
 			}
 			
+			
+			//Calcula a próxima geração
 			proximaGeracao(){
 				
 				this.geracao++;
@@ -73,6 +91,8 @@
 				}
 			}
 			
+			
+			//motor de regras para processar a geração
 			motorDeRegras(geracao, coluna){
 				
 				var iGeracaoAnterior = geracao-1;
@@ -90,6 +110,7 @@
 				else if (a == 0 && b == 0 && c == 0) return this.regras[7];
 			}
 		
+			
 			colunaAnterior(coluna){
 				
 				var auxiliarColunaAnterior = coluna -1;
@@ -102,6 +123,7 @@
 				
 				return auxiliarColunaAnterior;
 			}
+			
 			
 			colunaPosterior(coluna){
 				
@@ -116,6 +138,10 @@
 			}
 		}
 				
+		
+		//****************************************************
+		// FUNÇÃO DE DESENHO
+		//****************************************************
 		//Cria uma função que desenha um tabuleiro
 		function desenharTabuleiro(tabuleiro, tamanhoArestaCelula){
 			
@@ -164,6 +190,7 @@
 		//Nossa função desenhar que será chamada conforme o intervalo definido
 		function desenhar(){
 			
+			//Processa a próxima geração
 			tabuleiro.proximaGeracao();
 			
 			//Desenha o tabuleiro que acabamos de criar com celulas de aresta com 10 pixels

@@ -7,7 +7,8 @@
 <body>
 	<!-- Cria um canvas de largura 750 e altura 500 com borda solida azul -->
 	<!--  Mais informações: https://www.w3schools.com/tags/ref_canvas.asp -->
-	<canvas id="canvasDeDesenho" width="750" height="500" style="border:1px solid blue;"></canvas>	
+	<canvas id="canvasDeDesenho" width="750" height="500" style="border:1px solid blue;"></canvas>
+		
 	<script>	
 		//Cria uma função que desenha
 		function desenhar(){
@@ -21,10 +22,10 @@
 			//Limpa o canvas
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 			
-			//Define um cor de preenchimento
+			//Define uma cor de preenchimento
 			ctx.fillStyle =  "red";
 											
-			//Desenha um retângulo preenchido na posição e com o tamanho indicado
+			//Desenha um retângulo preenchido na posição e com o tamanho indicados
 			//ctx.fillRect (x, y, largura, altura);
 			//Mais informações: https://www.w3schools.com/tags/canvas_fillrect.asp
 			ctx.fillRect (100, 100, 150, 20);			
