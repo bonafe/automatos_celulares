@@ -4,34 +4,39 @@
 <meta charset="ISO-8859-1">
 <title>Autômato Celular - Desenhando no canvas</title>
 </head>
-<body>	
+<style>
+.flex-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+.caixaAutomato{
+	padding: 5px;
+}
+</style>
+<body class="flex-container">
 	<script>	
 	
 		class Tabuleiro{
 			constructor (linhas, colunas){
 				this.linhas = linhas;
-				this.colunas = colunas;
+				this.colunas = colunas;			
 				
-				//Adicionando variável para identificar a geração do autómato
-				this.geracao = 0; 
-				
-				//Define as regras de transformação das gerações
-				this.regras = [0,1,1,0,1,0,1,0];
-				
-				this.criarMatrizTabuleiro ();
-			}
+				this.matrizTabuleiro = this.criarMatrizTabuleiro ();
+			}			
 			
 			criarMatrizTabuleiro(){
-				//Cria uma matriz com o número de linhas
-				this.matrizTabuleiro = new Array(this.linhas);
+				//Cria uma matriz local com o número de linhas
+				var novaMatrizTabuleiro = new Array(this.linhas);
 				
 				//Para cada linha de nossa matriz
 				for (var linha = 0; linha < this.linhas; linha++){
 					
 					//Cria uma matriz com o número de colunas
 					//Inicia os elementos da matriz de colunas com zero
-					this.matrizTabuleiro [linha] = new Array (this.colunas).fill(0);
-				}				
+					novaMatrizTabuleiro [linha] = new Array (this.colunas).fill(0);
+				}	
+				
+				return novaMatrizTabuleiro;
 			}
 			
 			preencherMatrizTabuleiroComValoresAleatorios(){
@@ -51,65 +56,61 @@
 			
 			proximaGeracao(){
 				
-				this.geracao++;
-				
-				//Se o número de gerações atingiu o número de linhas				
-				if (this.geracao >= (this.linhas)){
+				var novaGeracao = this.criarMatrizTabuleiro();
 					
-					//Mantem a geração na última linha
-					this.geracao--;
-					//Retira a primeira linha da nossa matriz
-					this.matrizTabuleiro.shift();
-					//Adiciona uma nova linha no final de nossa matriz
-					this.matrizTabuleiro.push(new Array(this.colunas).fill(0));
+				//Processa as regras para gerar a próxima geração
+				for (var linha = 0; linha < this.linhas; linha++){
+										
+					for (var coluna = 0; coluna < this.colunas; coluna++){
+						
+						novaGeracao[linha][coluna] = this.motorDeRegras(linha, coluna);
+					}
 				}
 				
-				//Processa as regras para gerar a próxima geração
-				for (var coluna = 0; coluna < this.colunas; coluna++){
-					this.matrizTabuleiro[this.geracao][coluna] = this.motorDeRegras(this.geracao, coluna);
-				}
+				this.matrizTabuleiro = novaGeracao;
 			}
 			
-			motorDeRegras(geracao, coluna){
+			
+			motorDeRegras(linha, coluna){
 				
-				var iGeracaoAnterior = geracao-1;
-				var a = this.matrizTabuleiro[iGeracaoAnterior][this.colunaAnterior(coluna)];									
-				var b = this.matrizTabuleiro[iGeracaoAnterior][coluna];
-				var c = this.matrizTabuleiro[iGeracaoAnterior][this.colunaPosterior(coluna)];
+				var vizinhos = 0;
 				
-				if      (a == 1 && b == 1 && c == 1) return this.regras[0];
-				else if (a == 1 && b == 1 && c == 0) return this.regras[1];
-				else if (a == 1 && b == 0 && c == 1) return this.regras[2];
-				else if (a == 1 && b == 0 && c == 0) return this.regras[3];
-				else if (a == 0 && b == 1 && c == 1) return this.regras[4];
-				else if (a == 0 && b == 1 && c == 0) return this.regras[5];
-				else if (a == 0 && b == 0 && c == 1) return this.regras[6];
-				else if (a == 0 && b == 0 && c == 0) return this.regras[7];
+				for (var linhaReferencia = -1; linhaReferencia <= 1; linhaReferencia++){
+					for (var colunaReferencia = -1; colunaReferencia <= 1; colunaReferencia++){
+						vizinhos += this.matrizTabuleiro[this.trazerLinha(linha+linhaReferencia)][this.trazerColuna(coluna+colunaReferencia)];
+					}
+				 }
+				vizinhos -= this.matrizTabuleiro[linha][coluna];
+				
+				if ((this.matrizTabuleiro[linha][coluna] == 1) && (vizinhos < 2)){
+					return 0;
+				}else if ((this.matrizTabuleiro[linha][coluna] == 1) && (vizinhos > 3)){
+					return 0;
+				}else if ((this.matrizTabuleiro[linha][coluna] == 0) && (vizinhos == 3)){
+					return 1;
+				}else{
+					return this.matrizTabuleiro[linha][coluna];
+				}
 			}
 		
-			colunaAnterior(coluna){
-				
-				var auxiliarColunaAnterior = coluna -1;
-				
-				//Se a coluna anterior for menor que zero
-				if (auxiliarColunaAnterior < 0){
-					//Define a coluna anterior como a última coluna
-					auxiliarColunaAnterior = (this.colunas-1);
+			trazerLinha(linha){
+				if (linha >= this.linhas){
+					return 0;
+				}else if (linha < 0){
+					return this.linhas-1;
+				}else{
+					return linha;
 				}
-				
-				return auxiliarColunaAnterior;
 			}
 			
-			colunaPosterior(coluna){
-				
-				var auxColunaPosterior = coluna +1;
-				
-				//Se a coluna posterior for maior que o número de colunas
-				if (auxColunaPosterior >= this.colunas){
-					//Define a coluna anterior como a última coluna
-					auxColunaPosterior = 0;
+			trazerColuna(coluna){
+				if (coluna >= this.colunas){
+					return 0;
+				}else if (coluna < 0){
+					return this.colunas-1;
+				}else{
+					return coluna;
 				}
-				return auxColunaPosterior;
 			}
 		}
 				
@@ -153,10 +154,22 @@
 		
 		//Cria uma lista para guardar nossos autômatos
 		var listaAutomatos = [];
-		var quantidadeDeAutomatos = 100;
-		var largura = 200;
-		var altura = 200;
-		var tamanhoAresta = 10;
+		var quantidadeDeAutomatos = 1;
+		var largura = 1000;
+		var altura = 600;
+		var tamanhoAresta = 5;
+		
+		
+		function paddy(num, padlen, padchar) {
+		    var pad_char = typeof padchar !== 'undefined' ? padchar : '0';
+		    var pad = new Array(1 + padlen).join(pad_char);
+		    return (pad + num).slice(-pad.length);
+		}
+		
+		function gerarRegras(regra){
+			return paddy(regra.toString(2), 8, 0);
+		}
+		
 		
 		function criarAutomatos(){
 			
@@ -166,19 +179,23 @@
 			
 			var regras = 0;
 			
-			for (var iAutomato = 0; iAutomato < quantidadeDeAutomatos; iAutomato++){
-				var canvas = document.createElement("canvas");
-								
-				canvas.style.width = largura;
-				canvas.style.height = altura;
+			for (var iAutomato = 0; iAutomato < quantidadeDeAutomatos; iAutomato++){				
 				
-				var tabuleiro = new Tabuleiro(Math.floor(largura/tamanhoAresta), Math.floor(altura/tamanhoAresta));
+				var divAutomato = document.createElement("div");
+				divAutomato.className = "caixaAutomato";
+				var canvas = document.createElement("canvas");				
 				
-				tabuleiro.preencherLinhaTabuleiroComValoresAleatorios(0);
+				canvas.width = largura;
+				canvas.height = altura;
+				
+				var tabuleiro = new Tabuleiro(Math.floor(largura/tamanhoAresta), Math.floor(altura/tamanhoAresta));				
+				
+				tabuleiro.preencherMatrizTabuleiroComValoresAleatorios();
 								
 				listaAutomatos.push({"canvas":canvas, "tabuleiro":tabuleiro});
-									
-				body.appendChild(canvas);	
+																	
+				divAutomato.appendChild(canvas);				
+				body.appendChild(divAutomato);	
 			}								
 		}
 		

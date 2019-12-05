@@ -3,8 +3,17 @@
 <head>
 <meta charset="ISO-8859-1">
 <title>Autômato Celular - Desenhando no canvas</title>
+<style>
+.flex-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+.caixaAutomato{
+	padding: 5px;
+}
+</style>
 </head>
-<body>	
+<body class="flex-container">	
 	<script>	
 	
 		class Tabuleiro{
@@ -19,6 +28,10 @@
 				this.regras = [0,1,1,0,1,0,1,0];
 				
 				this.criarMatrizTabuleiro ();
+			}
+			
+			definirRegras(regras){
+				this.regras = regras;
 			}
 			
 			criarMatrizTabuleiro(){
@@ -153,10 +166,23 @@
 		
 		//Cria uma lista para guardar nossos autômatos
 		var listaAutomatos = [];
-		var quantidadeDeAutomatos = 100;
-		var largura = 200;
-		var altura = 200;
+		var quantidadeDeAutomatos = 255;
+		var largura = 100;
+		var altura = 100;
 		var tamanhoAresta = 10;
+		var regraGeral = 26;
+		
+		
+		function paddy(num, padlen, padchar) {
+		    var pad_char = typeof padchar !== 'undefined' ? padchar : '0';
+		    var pad = new Array(1 + padlen).join(pad_char);
+		    return (pad + num).slice(-pad.length);
+		}
+		
+		function gerarRegras(regra){
+			return paddy(regra.toString(2), 8, 0);
+		}
+		
 		
 		function criarAutomatos(){
 			
@@ -166,19 +192,32 @@
 			
 			var regras = 0;
 			
-			for (var iAutomato = 0; iAutomato < quantidadeDeAutomatos; iAutomato++){
+			for (var iNumeroAutomato = 0; iNumeroAutomato < quantidadeDeAutomatos; iNumeroAutomato++){
+				
+				var regra = gerarRegras(regraGeral);
+				
+				var divAutomato = document.createElement("div");
+				divAutomato.className = "caixaAutomato";
 				var canvas = document.createElement("canvas");
-								
-				canvas.style.width = largura;
-				canvas.style.height = altura;
+				var	input = document.createElement("input");
+				input.setAttribute("type", "text");
+				input.setAttribute("value", regraGeral + " - " + regra);
+				input.setAttribute("size", 9);
+				
+				canvas.width = largura;
+				canvas.height = altura;
 				
 				var tabuleiro = new Tabuleiro(Math.floor(largura/tamanhoAresta), Math.floor(altura/tamanhoAresta));
+				tabuleiro.definirRegras(regra);
 				
 				tabuleiro.preencherLinhaTabuleiroComValoresAleatorios(0);
 								
 				listaAutomatos.push({"canvas":canvas, "tabuleiro":tabuleiro});
 									
-				body.appendChild(canvas);	
+				divAutomato.appendChild(input);
+				divAutomato.appendChild(document.createElement("br"));
+				divAutomato.appendChild(canvas);				
+				body.appendChild(divAutomato);	
 			}								
 		}
 		
