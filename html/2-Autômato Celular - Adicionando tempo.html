@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Autômato Celular - Desenhando no canvas</title>
+</head>
+<body>
+	<!-- Cria um canvas de largura 750 e altura 500 com borda solida azul -->
+	<!--  Mais informações: https://www.w3schools.com/tags/ref_canvas.asp -->
+	<canvas id="canvasDeDesenho" width="750" height="500" style="border:1px solid blue;"></canvas>	
+	<script>	
+	
+		//Define e inicializa a variável globais X
+		//Iremos mudar o valor de X conforme a passagem do tempo
+		var x = 0;
+				
+		//Define e iniciliazar a variável global x_maximo
+		//Quando a varíavel x atingir o x_maximo (ou voltar para 0), mudaremos a direção
+		var x_maximo = 100;
+		
+		//Define e inicializa a variável global direcao
+		//Iremos mudar o valor da direção quando o contador de passos chegar em 100 ou em 0
+		//Direcao 1 vai para a direita, direção 0 vai para esquerda
+		var direcao = 1;
+	
+		//Cria uma função que desenha
+		function desenhar(){
+			
+			//Pede a referência para o canvas de desenho
+			var canvas = document.getElementById("canvasDeDesenho");
+			
+			//O contexto é o lugar onde iremos efetivamente desenhar
+			var ctx = canvas.getContext("2d");
+			
+			//Se a direção for igual a 1 iremos mover para a 
+			if (direcao == 1){
+				x ++;
+				if (x > x_maximo){
+					direcao = 0;
+				}
+			}
+			
+			if (direcao == 0){
+				x--;
+				if (x < 0){
+					direcao = 1;
+				}
+			}
+			
+			//Limpa o canvas
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			
+			//Define um cor de preenchimento
+			ctx.fillStyle =  "orange";
+									
+			//Desenha um retângulo preenchido na posição e com o tamanho indicado
+			//ctx.fillRect (x, y, largura, altura);
+			//Mais informações: https://www.w3schools.com/tags/canvas_fillrect.asp
+			ctx.fillRect (x, 100, 20, 20);			
+		}
+		
+		//Define um intervalo em que a função desenhar deve ser chamada
+		//setIntervalo(funcao_que_sera_chamada, intervalo_em_milissegundos)
+		//Mais informações: https://www.w3schools.com/jsref/met_win_setinterval.asp
+		setInterval (desenhar, 10);
+	</script>
+</body>
+</html>

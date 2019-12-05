@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Autômato Celular - Desenhando no canvas</title>
+</head>
+<body>
+	<!-- Cria um canvas de largura 750 e altura 500 com borda solida azul -->
+	<!--  Mais informações: https://www.w3schools.com/tags/ref_canvas.asp -->
+	<canvas id="canvasDeDesenho" width="750" height="500" style="border:1px solid blue;"></canvas>	
+	<script>	
+	
+		class Tabuleiro{
+			constructor (linhas, colunas){
+				this.linhas = linhas;
+				this.colunas = colunas;
+				this.criarMatrizTabuleiro ();
+			}
+			
+			criarMatrizTabuleiro(){
+				//Cria uma matriz com o número de linhas
+				this.matrizTabuleiro = new Array(this.linhas);
+				
+				//Para cada linha de nossa matriz
+				for (var linha = 0; linha < this.linhas; linha++){
+					
+					//Cria uma matriz com o número de colunas
+					//Inicia os elementos da matriz de colunas com zero
+					this.matrizTabuleiro [linha] = new Array (this.colunas).fill(0);
+				}				
+			}
+			
+			preencherMatrizTabuleiroComValoresAleatorios(){
+				//Para cada linha de nossa matriz de linhas
+				for (var linha = 0; linha < this.linhas; linha++){
+									
+					this.preencherLinhaTabuleiroComValoresAleatorios(linha);
+				}
+			}
+			
+			preencherLinhaTabuleiroComValoresAleatorios(linha){
+				//Percorre as colunas da linha preenchendo com valores aleatórios
+				for (var coluna = 0; coluna < this.colunas; coluna++){
+					this.matrizTabuleiro[linha][coluna] = Math.round(Math.random());
+				}
+			}
+		}
+				
+		//Cria uma função que desenha um tabuleiro
+		function desenharTabuleiro(tabuleiro, tamanhoArestaCelula){
+			
+			//Pede a referência para o canvas de desenho
+			var canvas = document.getElementById("canvasDeDesenho");
+			
+			//O contexto é o lugar onde iremos efetivamente desenhar
+			var ctx = canvas.getContext("2d");
+			
+			//Limpa o canvas
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			
+			//Para cada linha de nossa matriz de linhas
+			for (var linha = 0; linha < tabuleiro.linhas; linha++){
+								
+				//Para cada linha de nossa matriz de colunas
+				for (var coluna = 0; coluna < tabuleiro.colunas; coluna++){
+					
+					if (tabuleiro.matrizTabuleiro[linha][coluna] == 0){
+											
+						//Define um cor de preenchimento para o caso 0
+						ctx.fillStyle =  "black";
+						
+					}else if (tabuleiro.matrizTabuleiro[linha][coluna] == 1){
+						
+						//Define um cor de preenchimento para o caso 0
+						ctx.fillStyle =  "orange";
+					}
+					
+					var x = coluna*tamanhoArestaCelula;
+					var y = linha*tamanhoArestaCelula;
+					
+					//Desenha um retângulo preenchido na posição e com o tamanho indicado
+					//ctx.fillRect (x, y, largura, altura);
+					//Mais informações: https://www.w3schools.com/tags/canvas_fillrect.asp
+					ctx.fillRect (x, y, tamanhoArestaCelula, tamanhoArestaCelula);
+				}
+			}	
+		}
+		
+		//Cria um tabuleiro com dimensões de 30 linhas por 50 colunas
+		var tabuleiro = new Tabuleiro (30, 50);
+		//Preenche o tabuleiro com valores aleatórios
+		tabuleiro.preencherMatrizTabuleiroComValoresAleatorios();
+		
+		//Desenha o tabuleiro que acabamos de criar com celulas de aresta com 10 pixels
+		desenharTabuleiro(tabuleiro, 10);
+		
+	</script>
+</body>
+</html>

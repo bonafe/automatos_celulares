@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Automata Celular - 3</title>
+<style>
+html {
+  height: 100%;
+  border-style: solid;
+  border-color: rgb(255,0,0);
+}
+body {
+  min-height: 100%;
+  border-style: solid;
+  border-color: rgb(0,255,0);
+}
+</style>
+</head>
+<body>	
+	<script>
+	
+		class Universo{
+			constructor (linhas, colunas){								
+				this.linhas = linhas;
+				this.colunas = colunas;
+				this.criarEspaco();
+			}						
+			
+			criarEspaco(){
+				this.espaco = new Array(this.linhas);				
+				for (var linha = 0; linha < this.linhas; linha++){
+					this.espaco[linha] = new Array(this.colunas).fill(0);
+					for (var coluna = 0; coluna < this.colunas; coluna++){						
+						var valor = Math.round(Math.random());							
+						this.espaco[linha][coluna] = valor;
+					}
+				}				
+			}
+																		
+			aplicarTempo(tempo){
+				
+				var novoEspaco = new Array(this.linhas);
+				for (var linha = 0; linha < this.linhas; linha++){
+					novoEspaco[linha] = new Array(this.colunas).fill(0);
+				}
+				for (var linha = 0; linha < this.linhas; linha++){
+					for (var coluna = 0; coluna < this.colunas; coluna++){
+						novoEspaco[linha][coluna] = this.motorDeRegras(linha, coluna);
+					}					
+				}
+				this.espaco = novoEspaco;
+			}								
+			
+			trazerLinha(linha){
+				if (linha >= this.linhas){
+					return 0;
+				}else if (linha < 0){
+					return this.linhas-1;
+				}else{
+					return linha;
+				}
+			}
+			
+			trazerColuna(coluna){
+				if (coluna >= this.colunas){
+					return 0;
+				}else if (coluna < 0){
+					return this.colunas-1;
+				}else{
+					return coluna;
+				}
+			}
+			
+			motorDeRegras(linha, coluna){
+				
+				var vizinhos = 0;
+				
+				for (var linhaReferencia = -1; linhaReferencia <= 1; linhaReferencia++){
+					for (var colunaReferencia = -1; colunaReferencia <= 1; colunaReferencia++){
+						vizinhos += this.espaco[this.trazerLinha(linha+linhaReferencia)][this.trazerColuna(coluna+colunaReferencia)];
+					}
+				 }
+				vizinhos -= this.espaco[linha][coluna];
+				
+				if ((this.espaco[linha][coluna] == 1) && (vizinhos < 2)){
+					return 0;
+				}else if ((this.espaco[linha][coluna] == 1) && (vizinhos > 3)){
+					return 0;
+				}else if ((this.espaco[linha][coluna] == 0) && (vizinhos == 3)){
+					return 1;
+				}else{
+					return this.espaco[linha][coluna];
+				}
+			}
+		}
+	
+		var tamanhoAresta = 10;
+		var colunas = 1;
+		var linhas = 1;				
+		
+		var elementos = [];
+		
+		function iniciar(){
+			
+			var body = document.getElementsByTagName("body")[0];
+			
+			var largura = window.innerWidth;
+			var altura = window.innerHeight;
+
+			
+			for (var linha = 0; linha < linhas; linha++){
+				for (var coluna = 0; coluna < colunas; coluna++){
+					var canvas = document.createElement("canvas");
+					
+					canvas.style.top = 50;
+					canvas.style.left = 50;
+					canvas.style.position = "absolute";
+					canvas.width = largura;
+					canvas.height = altura;
+					canvas.id = "teste";
+					
+					var universo = new Universo(Math.floor(altura/tamanhoAresta), Math.floor(largura/tamanhoAresta));						
+					
+					elementos.push({"canvas":canvas, "universo":universo});
+										
+					body.appendChild(canvas);
+				}
+			}								
+		}
+		
+		iniciar();
+		setInterval(desenharElementos, 10);
+		
+		function rgb(r, g, b){
+		  return "rgb("+r+","+g+","+b+")";
+		}
+		
+		function desenharElementos(){
+			for (var i = 0; i < elementos.length; i++){				
+				desenhar(elementos[i]["canvas"], elementos[i]["universo"]);
+			}
+		}
+		
+		function desenhar(canvas, universo){
+						
+			var ctx = canvas.getContext("2d");
+			
+			for (var linha = 0; linha < universo.linhas; linha++){
+				
+				for (var coluna = 0; coluna < universo.colunas; coluna++){
+			
+					var cor; 					
+					if (universo.espaco[linha][coluna] == 1){					
+						cor = rgb (255, 0, 0);
+					}else{
+						cor = rgb (0, 0, 0);
+					}
+					ctx.fillStyle =  cor;
+															
+					var x = coluna*tamanhoAresta;
+					var y = linha*tamanhoAresta;
+					ctx.fillRect (x, y, tamanhoAresta, tamanhoAresta);										
+				}
+			}
+			universo.aplicarTempo(1);			
+		}		
+						
+	</script>
+</body>
+</html>
